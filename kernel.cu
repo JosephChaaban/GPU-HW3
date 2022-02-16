@@ -22,7 +22,7 @@ for (unsigned int tile = 0; tile < ceilf(N/(float)TILE_DIM); ++tile){
     else {
         A_s[threadIdx.y][threadIdx.x] = 0;
     }
-    if(col <N && (i*TILE_DIM + threadIdx.y) < K){
+    if(col <N && (tile*TILE_DIM + threadIdx.y) < K){
     B_s[threadIdx.y][threadIdx.x] = B[(tile*TILE_DIM + threadIdx.y)*N + col];}
     else{
         B_s[threadIdx.x][threadIdx.y] = 0;
@@ -31,7 +31,7 @@ for (unsigned int tile = 0; tile < ceilf(N/(float)TILE_DIM); ++tile){
     __syncthreads();
 
     for(unsigned int j = 0; j < TILE_DIM; ++j){
-        sum += A_s[threadIdx.y][j]*B_s[j][threadIdx];
+        sum += A_s[threadIdx.y][j]*B_s[j][threadIdx.x];
     }
     
     __syncthreads();
