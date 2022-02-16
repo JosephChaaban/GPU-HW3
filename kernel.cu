@@ -15,7 +15,7 @@ __global__ void mm_tiled_kernel(float* A, float* B, float* C, unsigned int M, un
     unsigned int col = blockIdx.x*TILE_DIM + threadIdx.x;
     float sum = 0.0f;
  
-for (unsigned int tile = 0; tile < (K/(TILE_DIM); ++tile){
+for (unsigned int tile = 0; tile < K/TILE_DIM; ++tile){
     
     if(row < M && (tile*TILE_DIM + threadIdx.x)<K){
     A_s[threadIdx.y][threadIdx.x] = A[row*K + tile*TILE_DIM + threadIdx.x];}
