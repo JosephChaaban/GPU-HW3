@@ -15,9 +15,9 @@ __global__ void mm_tiled_kernel(float* A, float* B, float* C, unsigned int M, un
     unsigned int col = blockIdx.x*TILE_DIM + threadIdx.x;
     float sum = 0.0f;
  
-for (unsigned int tile = 0; tile < ceilf(N/(float)TILE_DIM; ++tile){
+for (unsigned int tile = 0; tile < ceilf(N/(float)TILE_DIM; ++tile)){
     
-    if(row < M && (i*TILE_DIM + threadIdx.x)<K){
+    if(row < M && (tile*TILE_DIM + threadIdx.x)<K){
     A_s[threadIdx.y][threadIdx.x] = A[row*K + tile*TILE_DIM + threadIdx.x];}
     else {
         A_s[threadIdx.y][threadIdx.x] = 0;
@@ -30,8 +30,8 @@ for (unsigned int tile = 0; tile < ceilf(N/(float)TILE_DIM; ++tile){
 
     __syncthreads();
 
-    for(unsigned int j = 0; j < TILE_DIM); ++j){
-        sum += A_s[threadIdx.y][j]*B_s[j][threadIdx]
+    for(unsigned int j = 0; j < TILE_DIM; ++j){
+        sum += A_s[threadIdx.y][j]*B_s[j][threadIdx];
     }
     
     __syncthreads();
@@ -88,7 +88,7 @@ void mm_gpu(float* A, float* B, float* C, unsigned int M, unsigned int N, unsign
     dim3 numberOfThreadsPerBlock(32, 32);
 	dim3 numberOfBlocks((N + numberOfThreadsPerBlock.x - 1) / numberOfThreadsPerBlock.x, (M + numberOfThreadsPerBlock.y - 1) / numberOfThreadsPerBlock.y);
 
-	mm_kernel <<< numberOfBlocks, numberOfThreadsPerBlock >>> (A_d, B_d, C_d, M, N, K);
+	mm_tiled_kernel <<< numberOfBlocks, numberOfThreadsPerBlock >>> (A_d, B_d, C_d, M, N, K);
 
 
     cudaDeviceSynchronize();
